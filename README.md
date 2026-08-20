@@ -208,5 +208,12 @@ matter as genome size grows:
   behavior, not something specific to this pipeline, and it will silently
   truncate/corrupt your bSFS if left at gIMble's own default of 2.
 
+## Citation
+If you have used this package for your work (thanks!), please cite the following:
+
+Yusuf, L.H., Laetsch, D.R., Lohse, K. and Ritchie, M.G., 2026. Genomic analyses in Drosophila do not support the classic allopatric model of speciation. Evolution Letters, 10(2), pp.186-194.
+
+Please also cite all of the packages that are used within this Snakemake pipeline (see config.yaml). 
+
 ## A small (AI) note: 
 Hi all, for transparency sake: much of the package was converted from Mathematica scripts to the R package with the help of Claude (Sonnet/Opus) models. This dramatically sped up the time it took to come up finish putting together this package and I have tried to sanity check the results as much as possible, but LLMs are of course error-prone. If you do spot a bug or an issue with outputs, please do raise an issue and I will try to fix it as quickly as I can.
