@@ -1,0 +1,110 @@
+# =============================================================================
+# Species-pair demographic pipeline - configuration
+#
+# This holds only GLOBAL parameters that apply to every pair in a batch.
+# Which files belong to which sample/pair lives in two separate manifests
+# (see samples_example.tsv and pairs_example.tsv) - nothing here needs
+# editing between runs, or between a batch of 2 pairs and a batch of 200.
+# =============================================================================
+
+samples_manifest: "samples.tsv"    # one row per unique sequenced individual
+pairs_manifest: "pairs.tsv"        # one row per species pair to analyze
+
+# --- Where blocks are drawn from --------------------------------------------
+# "intergenic": blocks only from gene-buffered, repeat-free intergenic
+#   sequence (the original design). Cleanest signal, but for gene-dense
+#   genomes (see README - this was measured directly on a real Drosophila
+#   genome, not assumed) the ceiling on how much sequence is even
+#   available this way can be small.
+# "intron": blocks only from ONE intron per gene - the LARGEST intron
+#   that is NOT the first intron (in transcription order, strand-aware),
+#   trimmed by intron.trim bp on each end. Genes with fewer than 2
+#   introns on their canonical (longest) transcript contribute nothing.
+#   Deliberately overlaps gene bodies - that is the entire point of this
+#   strategy, not a bug - but is more exposed to linked/background
+#   selection from the gene's own constraint than buffered intergenic
+#   sequence is, since an intron sits inside the gene's own transcript.
+# "mixed" (default): the union of both candidate pools above, with block
+#   spacing enforced GLOBALLY across the combined set (so an intergenic
+#   block and an intron block are never placed closer together than
+#   block_spacing allows either) - not two independently-spaced sets
+#   just concatenated together afterward.
+region_strategy: "mixed"
+
+# --- Intron extraction (only used if region_strategy is intron or mixed) ---
+intron:
+  transcript_feature: "mRNA"   # GFF3 feature type for transcripts
+  exon_feature: "exon"         # GFF3 feature type for exons
+  trim: 10                     # bp trimmed from EACH end of the selected intron
+
+# --- Variant calling (freebayes) --------------------------------------------
+freebayes:
+  ploidy: 2
+  theta: 0.02
+  # Freebayes does not parallelize internally - split into this many
+  # genomic chunks and call in parallel. Chunking is per reference genome,
+  # so this applies uniformly regardless of how many pairs share that
+  # reference. Increase for larger genomes.
+  n_chunks: 20
+
+# --- gimbleprep / gIMble preprocessing and block extraction -----------------
+# Flag names below match the current gimbleprep/gimble CLIs exactly
+# (confirmed against LohseLab/gimbleprep and LohseLab/gIMble source).
+gimble:
+  min_depth: 2         # gimbleprep -m: kept low - single individual per species, not a population sample
+  # Left unset (null) intentionally: gimbleprep's own default max_depth is
+  # 2x each BAM's mean coverage, which is a reasonable default on its own.
+  max_depth: null
+  min_qual: 1          # gimbleprep -q: minimum PHRED site quality
+  snpgap: 2            # gimbleprep -g: bp around indels/non-SNPs to also exclude
+  block_length: 200    # gimble blocks -l: bp of callable sequence per block
+  # gimble blocks -m: max bp a block may physically span. gIMble's own
+  # block construction (sites_to_blocks) computes max_gap = block_span -
+  # block_length, then tolerates gaps up to max_gap bp BETWEEN callable
+  # sites within a single block - it does NOT treat this pipeline's
+  # pre-selected, pre-spaced windows (from select_spaced_blocks.py) as
+  # inviolable block boundaries. The previous default of 20000 gave
+  # max_gap=19800 - LARGER than even the old 10kb block_spacing, meaning
+  # gIMble's own chunking could in principle bridge across the gap
+  # between two deliberately-separated, independently-spaced blocks and
+  # mix sites from both into one. This only failed to cause visible
+  # problems because each pre-selected window happens to contribute
+  # exactly block_length callable sites, which is fragile, not a real
+  # safeguard - any window even one callable site short breaks the
+  # alignment. Set close to block_length instead: max_gap=20 tolerates a
+  # little real-world missingness within a window while being far too
+  # small to ever bridge block_spacing (must stay well under whatever
+  # block_spacing is set to, below).
+  block_span: 220
+  # gimble tally -k: max count per mutation type before truncating to a
+  # marginal ">max" bucket. THE TOOL'S OWN DEFAULT IS 2, WHICH WILL SILENTLY
+  # TRUNCATE REAL DATA - demogfit needs the exact blockwise mutation-count
+  # distribution. Set above the largest per-category count in your data.
+  kmax: 50
+  tally_label: "blocks_tally"
+
+# --- Intergenic-region selection criteria -----------------------------------
+intergenic:
+  gene_buffer: 100000     # bp: exclude any site within this distance of an annotated gene
+  # bp: minimum gap between the end of one block and the start of the
+  # next. Reduced from 10000 - 10kb was likely more conservative than
+  # needed for a Drosophila-like genome given its typically high
+  # recombination rate (same reasoning as the gene_buffer reduction).
+  # Since each block "costs" (block_length + block_spacing) of usable
+  # sequence to place, and block_length is tiny by comparison (200bp),
+  # this value dominates how many blocks a given amount of usable genome
+  # can yield - roughly proportional to 1/block_spacing. Still uniform
+  # across the genome, so genuinely low-recombination regions (e.g.
+  # chromosome 4, pericentromeric regions in Drosophila) remain more
+  # linked than this value implies for the genome-wide average.
+  block_spacing: 5000
+  gff_feature: "gene"     # GFF3 feature type defining gene footprints
+
+# --- Compute ---------------------------------------------------------------
+threads:
+  mapping: 16
+  freebayes_chunk: 4
+  gimble: 16
+  bedtools: 4
+
+output_dir: "results"

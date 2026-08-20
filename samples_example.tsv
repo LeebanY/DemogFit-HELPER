@@ -1,0 +1,7 @@
+sample_id	r1	r2
+affinis	data/affinis_R1.fastq.gz	data/affinis_R2.fastq.gz
+athabasca	data/athabasca_R1.fastq.gz	data/athabasca_R2.fastq.gz
+ambigua	data/ambigua_R1.fastq.gz	data/ambigua_R2.fastq.gz
+obscura	data/obscura_R1.fastq.gz	data/obscura_R2.fastq.gz
+mauritiana	data/mauritiana_R1.fastq.gz	data/mauritiana_R2.fastq.gz
+yakuba	data/yakuba_R1.fastq.gz	data/yakuba_R2.fastq.gz

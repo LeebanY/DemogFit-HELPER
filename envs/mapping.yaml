@@ -1,0 +1,14 @@
+name: mapping
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - fastp>=0.23
+  - bwa-mem2>=2.2
+  # No version pin: >=1.19 kept resolving to an old 1.19 build whose
+  # pinned ncurses dependency has since been pruned from the channel
+  # index. Unpinned lets the solver pick any current, mutually
+  # compatible build instead of gravitating back toward that release.
+  - samtools
+  - sambamba>=1.0
+  - picard>=3.1

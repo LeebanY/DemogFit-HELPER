@@ -1,0 +1,4 @@
+pair_id	sampleA	sampleB	reference_fasta	reference_gff	repeat_bed	include_sequences
+affinis_athabasca	affinis	athabasca	data/affinis_athabasca_ref.fasta	data/affinis_athabasca_ref.gff3	data/affinis_athabasca_ref_repeats.bed	
+ambigua_obscura	ambigua	obscura	data/ambigua_obscura_ref.fasta	data/ambigua_obscura_ref.gff3	data/ambigua_obscura_ref_repeats.bed	
+mauritiana_yakuba	mauritiana	yakuba	data/mauritiana_yakuba_ref.fasta	data/mauritiana_yakuba_ref.gff3	data/mauritiana_yakuba_ref_repeats.bed	

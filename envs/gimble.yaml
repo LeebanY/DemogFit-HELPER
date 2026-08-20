@@ -1,0 +1,6 @@
+name: gimble
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - gimble    # conda-forge; conda install -c conda-forge gimble

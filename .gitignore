@@ -1,0 +1,23 @@
+# Snakemake's own state/metadata/conda-env cache - regenerated automatically,
+# and can contain machine-specific paths
+.snakemake/
+
+# Pipeline outputs - large, regenerable, and specific to whatever data you ran
+results/
+
+# Your own real input data and manifests - these reference YOUR file paths
+# and are specific to your own run, not something to commit. The *_example.tsv
+# templates ARE tracked (see below) - only the real, filled-in copies are excluded.
+data/
+samples.tsv
+pairs.tsv
+
+# SLURM/pipeline logs
+logs/
+*.log
+*.out
+*.err
+
+# OS/editor cruft
+.DS_Store
+*.swp

@@ -1,0 +1,13 @@
+name: variant_calling
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - freebayes>=1.3
+  # No version pins on these three: >=1.19 kept resolving to an old
+  # 1.19 build whose pinned ncurses/libcurl dependencies have since
+  # been pruned from the channel index. Unpinned lets the solver pick
+  # any current, mutually compatible set of builds instead.
+  - bcftools
+  - htslib   # provides bgzip, tabix
+  - samtools

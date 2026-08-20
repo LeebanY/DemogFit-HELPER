@@ -1,0 +1,6 @@
+name: gimbleprep
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - gimbleprep    # bioconda; conda install -c bioconda gimbleprep
