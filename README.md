@@ -207,3 +207,6 @@ matter as genome size grows:
   and in the Snakefile's `gimble_tally` rule) - this is a real gIMble
   behavior, not something specific to this pipeline, and it will silently
   truncate/corrupt your bSFS if left at gIMble's own default of 2.
+
+## A small (AI) note: 
+Hi all, for transparency sake: much of the package was converted from Mathematica scripts to the R package with the help of Claude (Sonnet/Opus) models. This dramatically sped up the time it took to come up finish putting together this package and I have tried to sanity check the results as much as possible, but LLMs are of course error-prone. If you do spot a bug or an issue with outputs, please do raise an issue and I will try to fix it as quickly as I can.
